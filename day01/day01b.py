@@ -1,5 +1,7 @@
-## Advent of code 2019, AoC day 1 puzzle 1
+## Advent of code 2019, AoC day 1 puzzle 2
 ## This solution (python3.7) by kannix68, @ 2019-12-11.
+
+import itertools as itertools
 
 ### generic aoc code
 def assert_msg(msg, assertion):
@@ -7,7 +9,8 @@ def assert_msg(msg, assertion):
   print("assert-OK: {}".format(msg))
 
 def expect_msg(msg, expected, inputs):
-  assert_msg(msg.format(inputs, expected), expected == solve(inputs))
+  results = solve(inputs)
+  assert_msg(msg.format(inputs, expected, results), expected == results)
 
 def read_file_to_str(filename):
   """Read a file into one string."""
@@ -25,17 +28,30 @@ def read_file_to_list(filename):
 
 ## PROBLEM DOMAIN code
 
-def solve(input):
+def calc_fuel(inputs):
+  """Calculate fuel for given mass."""
+  return int(inputs/3)-2
+
+def solve(inputs):
   """Solve the puzzle."""
-  return int(input/3)-2
+  # functional:
+  # define an infinite genrator for calc_fuel using yield
+  # lst = itertools.takewhile(...)
+  fuel = inputs
+  fuel_sum = 0
+  while True:
+   fuel = calc_fuel(fuel)
+   if fuel <= 0:
+     break
+   fuel_sum += fuel
+  return fuel_sum
 
 ## MAIN
 
 ### tests
-expect_msg("input={} expects output={}", 2, 12)
-expect_msg("input={} expects output={}", 2, 14)
-expect_msg("input={} expects output={}", 654, 1969)
-expect_msg("input={} expects output={}", 33583, 100756)
+expect_msg("input={} expects output={}; was={}", 2, 14)
+expect_msg("input={} expects output={}; was={}", 966, 1969)
+expect_msg("input={} expects output={}; was={}", 50346, 100756)
 
 ### personal input
 data = read_file_to_list('day01.in')
