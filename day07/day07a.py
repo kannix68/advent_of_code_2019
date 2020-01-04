@@ -5,7 +5,7 @@
 
 
 ##
-# Advent of code 2019, AoC day 7 puzzle 2
+# Advent of code 2019, AoC day 7 puzzle 1
 # This solution (python3.7 jupyter notebook) by kannix68, @ 2020-01-03.
 
 import sys

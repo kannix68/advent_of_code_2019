@@ -45,3 +45,8 @@ def read_file_to_list(filename: str) -> str:
 def flatten(l: list) -> list:
   """Flatten an arbitrary list-of-lists into one flat list."""
   return [item for sublist in l for item in sublist]
+
+# This currently only works on flat lists:
+def cl(l: list) -> str:
+  """Return compact list representation as str."""
+  return f"[{','.join(map(str,l))}]"
