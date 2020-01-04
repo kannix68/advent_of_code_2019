@@ -4,7 +4,7 @@
 # Generic aoc code.
 # Written for Advent of Code 2019
 # by kannix68
-# current as of 2020-01-01
+# current as of 2020-01-04
 
 ## file and i/o handling, messaging/logging
 def assert_msg(msg: str, assertion) -> None:
@@ -50,3 +50,17 @@ def flatten(l: list) -> list:
 def cl(l: list) -> str:
   """Return compact list representation as str."""
   return f"[{','.join(map(str,l))}]"
+
+# from day 10a, reusable
+# Input has already to be a contiuous left-to right top-to-down list-of-lists
+def represent_2d_char_list(l: list) -> str:
+  """Output a 2d character list as aligned multiline string. Can be used for printing."""
+  row_num = 0
+  repres = ""
+  for rowlist in l:
+    if row_num > 0:
+      repres += "\n"
+    for c in rowlist:
+      repres += str(c)
+    row_num += 1
+  return repres

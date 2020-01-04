@@ -55,7 +55,7 @@ class IntcodeInterpreter:
     #self.mem0 = mem.copy()
     self.ptr = 0  # instruction pointer
     self.ctr = 0  # instruction counter
-    self.state = self.STATE_INITIALIZED
+    self.state = IntcodeInterpreter.STATE_INITIALIZED
     self.pseudo_stdin = []
     self.pseudo_stdout = []
     self.relative_base = 0
@@ -125,17 +125,22 @@ class IntcodeInterpreter:
       self.ptr += 4
     elif opcode == 3:  # IN
       # take an input value "from pseudo-stdin" and store it
-      # always uses implicit MODE_POSITION
-      op_read_in = self.fetch_int_stdin()
-      trg = -1
-      if p1_mode == self.MODE_POSITION:
-        trg = mem[ptr+1]
-      elif p1_mode == self.MODE_IMMEDIATE:
-        raise(RuntimeError(f"MODE_IMMEDIATE not defined for opcode=3=IN")) 
-      elif p1_mode == self.MODE_RELATIVE:
-        trg = mem[ptr+1] + rbs
-      mem[trg] = op_read_in
-      self.ptr += 2
+      if self.pause_on_input and len(self.pseudo_stdin)==0:
+        self.state = self.STATE_PAUSED
+        return
+      elif self.pause_on_input and len(self.pseudo_stdin)>0:
+        op_read_in = self.fetch_int_stdin()
+      else:
+        op_read_in = self.fetch_int_stdin()
+        trg = -1
+        if p1_mode == self.MODE_POSITION:
+          trg = mem[ptr+1]
+        elif p1_mode == self.MODE_IMMEDIATE:
+          raise(RuntimeError(f"MODE_IMMEDIATE not defined for opcode=3=IN")) 
+        elif p1_mode == self.MODE_RELATIVE:
+          trg = mem[ptr+1] + rbs
+        mem[trg] = op_read_in
+        self.ptr += 2
     elif opcode == 4:  # OUT
       # output a value to "pseudo-stdout"
       if p1_mode == self.MODE_POSITION:
@@ -254,10 +259,11 @@ class IntcodeInterpreter:
     self.ctr += 1
     #print(f"stepped! {self}")
 
-  def interpret_program(self, pause_on_output = False) -> None:
+  def interpret_program(self, pause_on_output = False, pause_on_input = False) -> None:
     """Interpret the program given in the puzzle (all steps until prg-exit). list in, list out."""
     self.state = self.STATE_RUNNING
     self.pause_on_output = pause_on_output
+    self.pause_on_input = pause_on_input
     while self.state != self.STATE_HALTED and self.state != self.STATE_PAUSED:
       self.step_program()
     #print(f"interpreted halted! {self}")
@@ -275,3 +281,26 @@ class IntcodeInterpreter:
     """Fetch an output value produced previously. It will be removed from pseaudo_stdout"""
     i = self.pseudo_stdout.pop(0)
     return i
+
+  def has_output(self) -> bool:
+    return len(self.pseudo_stdout) > 0
+
+  def waits_for_input(self) -> bool:
+    return self.STATE_PAUSED and len(self.pseudo_stdin) == 0 and not self.has_output()
+
+class IntcodeSimulator(IntcodeInterpreter):
+  def interpret_program(self, pause_on_output = False, pause_on_input = False) -> None:
+    return
+
+  def next_pause_for_input(self):
+    self.state = IntcodeInterpreter.STATE_PAUSED
+    self.pseudo_stdin = []
+    self.pseudo_stdout = []
+
+  def next_consume_input(self):
+    self.fetch_int_stdin()
+
+  def next_output(self, i):
+    self.pseudo_stdout.append(i)
+
+
