@@ -5,7 +5,7 @@
 
 
 ##
-# Advent of code 2019, AoC day 11 puzzle 1 and pzzle 2
+# Advent of code 2019, AoC day 11 puzzle 1 and puzzle 2
 # This solution (python3.7 jupyter notebook) by kannix68, @ 2020-01-04.
 
 import sys

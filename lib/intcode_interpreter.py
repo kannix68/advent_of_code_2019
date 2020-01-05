@@ -3,14 +3,20 @@
 # This class (python3.7 jupyter notebook) by kannix68, @ 2020-01-04.
 #
 # History:
-# 2020-01-04  ok for day 9 (adressing relative-mode, growable memory-list)
+# 2020-01-04  ok for day 11  (IntcodeSimulator)
+# 2020-01-04  ok for day  9  (adressing relative-mode, growable memory-list)
 # ...
 # 2019-12-30  started, ok for day 2
+
+import logging
+import sys
+logging.basicConfig(stream=sys.stderr, level=logging.INFO)
+log = logging.getLogger(__name__)
 
 # see [Automatically growing lists in Python - Stack Overflow](https://stackoverflow.com/questions/4544630/automatically-growing-lists-in-python)
 class GrowableList(list):
   def __init__(self, init_value=None):
-    print(f"initialize GrowableList with init_value={init_value}")
+    log.debug(f"initialize GrowableList with init_value={init_value}")
     self.init_value = init_value
     # super call, see: [class - How to invoke the super constructor in Python? - Stack Overflow](https://stackoverflow.com/questions/2399307/how-to-invoke-the-super-constructor-in-python)
     super(GrowableList, self).__init__()
@@ -25,7 +31,7 @@ class GrowableList(list):
     #print(f"GrowableList.__setitem__(self, {index}, {value}) called")
     if index >= len(self):
       extend_size = index + 1 - len(self)
-      print(f"GrowableList: extend list by {extend_size} to cope with index={index}")
+      log.debug(f"GrowableList: extend list by {extend_size} to cope with index={index}")
       self.extend([self.init_value]*(extend_size))
     list.__setitem__(self, index, value)
 
@@ -51,7 +57,7 @@ class IntcodeInterpreter:
       for i in mem:
         gmem.append(i)
       self.mem = gmem
-      print(f"initialized growable memory len={len(gmem)}")
+      log.debug(f"initialized growable memory len={len(gmem)}")
     #self.mem0 = mem.copy()
     self.ptr = 0  # instruction pointer
     self.ctr = 0  # instruction counter
@@ -283,12 +289,15 @@ class IntcodeInterpreter:
     return i
 
   def has_output(self) -> bool:
+    """Return pseudo_stdout item-len > 0; output is available in pseudo_stdout queue."""
     return len(self.pseudo_stdout) > 0
 
   def waits_for_input(self) -> bool:
+    """Return if Interpreter waits for input, will only be true if all outputs are fetched."""
     return self.STATE_PAUSED and len(self.pseudo_stdin) == 0 and not self.has_output()
 
 class IntcodeSimulator(IntcodeInterpreter):
+  """An IntcodeSimulatur for IntcodeInterpreter, where you can feed in expected behaviour programmatically."""
   def interpret_program(self, pause_on_output = False, pause_on_input = False) -> None:
     return
 

@@ -6,6 +6,9 @@
 # by kannix68
 # current as of 2020-01-04
 
+from typing import Dict, List, Tuple
+
+
 ## file and i/o handling, messaging/logging
 def assert_msg(msg: str, assertion) -> None:
   """Assert an expected function result according to inputs."""
@@ -64,3 +67,34 @@ def represent_2d_char_list(l: list) -> str:
       repres += str(c)
     row_num += 1
   return repres
+
+# from day 17a, reusable
+# Input has already to be a list of strings (top-to-down).
+def represent_strlist(strlist: List[str]) -> str:
+  """Output a list-of-strings as aligned multiline string. Can be used for printing."""
+  return "\n".join(strlist)
+
+#
+# Orientation is assumed top-to-bottom and left-to-right.
+# Output is in order north, west, south, east.
+def get_neighbors(strlist: List[str], x: int, y: int) -> List[str]:
+  """Get a list of 4 neighbors of cell. May return '' as element if boundary."""
+  max_y_idx = len(strlist) - 1
+  max_x_idx = len(strlist[0]) - 1
+  if x > 0:
+    w = strlist[y][x-1]
+  else:
+    w = ''
+  if x < max_x_idx:
+    e = strlist[y][x+1]
+  else:
+    e = ''
+  if y > 0:
+    n = strlist[y-1][x]
+  else:
+    n = ''
+  if y < max_y_idx:
+    s = strlist[y+1][x]
+  else:
+    s = ''
+  return [n, w, s, e]
