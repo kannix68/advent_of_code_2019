@@ -98,3 +98,20 @@ def get_neighbors(strlist: List[str], x: int, y: int) -> List[str]:
   else:
     s = ''
   return [n, w, s, e]
+
+## numbers and math
+def sign(n):
+  """Return sign of number (-1,0,1)."""
+  return 1 if n>0 else -1 if n<0 else 0
+
+def fcmp(f1, f2):
+  """Boolean Float-compare to a delta of 1e-9."""
+  return abs(f1-f2) < 1.0e-9 # delta 10^-9
+
+def map_e(func, oplist):
+  """Eager version of map, returns list. May be slower or more resource hungry than builtin genrator/lazy version."""
+  return list(map(func, oplist))
+
+def filter_e(func, oplist):
+  """Eager version of filter, returns list. May be slower or more resource hungry than builtin genrator/lazy version."""
+  return list(filer(func, oplist))
