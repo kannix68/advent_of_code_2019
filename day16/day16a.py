@@ -28,6 +28,7 @@ log = logging.getLogger(__name__)
 
 ## PROBLEM DOMAIN code
 import itertools
+from timeit import default_timer as timer  # performance timing measurement
 
 
 # In[ ]:
@@ -57,9 +58,9 @@ def phase_transform(ins: str, ptrn: List[int], num_phases = 1) -> str:
       dig = abs(sum(outdig_compositor))%10
       outdigs.append(dig)
       outs = ''.join(map_e(str, outdigs))
-    log.debug(f"phase_transform #{iter+1}: outdigs={outs} via {len(ins)} iters from ptrn={aoc.cl(ptrn)}, input#={tmp}")
+    #log.debug(f"phase_transform #{iter+1}: outdigs={outs} via {len(ins)} iters from ptrn={aoc.cl(ptrn)}, input#={tmp}")
 
-  log.info(f"phase_transform iter={iter+1} out={outs} via {len(ins)} iters from ptrn={aoc.cl(ptrn)}, input0={ins}")
+  log.info(f"phase_transform iter={iter+1} out={outs} via {len(ins)} iters from ptrn={aoc.cl(ptrn)}, input0={ins[:40]}...")
   return outs
 
 
@@ -73,7 +74,6 @@ def phase_transform(ins: str, ptrn: List[int], num_phases = 1) -> str:
 
 
 ### tests
-log.setLevel(logging.INFO)
 
 
 # In[ ]:
@@ -156,9 +156,12 @@ aoc.assert_msg(f"input={ins} expects output={expected}, got {result}", expected 
 log.setLevel(logging.INFO)
 data = aoc.read_file_to_str("day16.in").strip()
 ptrn = [0, 1, 0, -1]
-log.info(f"data=\n{data}")
-#res = solve(data)
+log.info(f"data-len={len(data)}, data={data[:40]}...")
+
+tm_start = timer()
 result = phase_transform(data, ptrn, num_phases=100)
+tm_end = timer()
+
 result = result[:8]
-print(f"result={result}")
+print(f"result={result} needed tm={tm_end-tm_start}")
 
